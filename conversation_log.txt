@@ -1,1 +1,213 @@
+Section 1: Iterative Prompt Engineering Practice
+----------------------------------------------------------------------------------------------------------------------
+My Initial Prompt:
+-------------------
+I need to create a command-line quiz generator programme in Python for my programming course. The programme should load question/answer pairs from a text file, allow the user to specify how many questions they want, randomly select that many questions, present questions one by one and collect user answers, then calculate and display a final score.
 
+Please provide pseudocode that only uses basic Python concepts suitable for our introductory course - no advanced features. Follow a structured planning approach with clear steps.
+
+-------------------
+AI’s Pseudocode Response:
+-------------------
+
+PROBLEM RESTATEMENT:
+Create an interactive CLI quiz system that reads questions from a file, randomly selects a subset, administers the quiz, and reports results.
+
+INPUTS/OUTPUTS:
+- Input: filename (string), number of questions (integer), user answers (strings)
+- Output: questions presented to user, final score and percentage
+
+EXAMPLE WALKTHROUGH:
+File contains: "What is 2+2?|4", "Capital of France?|Paris", "Python creator?|Guido"
+User wants 2 questions
+System randomly picks questions 1 and 3
+User answers "4" and "Guido" 
+Score: 2/2 = 100%
+
+PSEUDOCODE:
+FUNCTION load_questions(filename):
+    CREATE empty list questions
+    OPEN file for reading
+    FOR each line in file:
+        SPLIT line by "|" to get question and answer
+        ADD (question, answer) tuple to questions list
+    RETURN questions
+
+FUNCTION select_random_questions(questions, count):
+    IF count > length of questions:
+        SET count to length of questions
+    RETURN random sample of 'count' questions from questions list
+
+FUNCTION run_quiz(selected_questions):
+    SET score to 0
+    FOR each (question, correct_answer) in selected_questions:
+        DISPLAY question to user
+        GET user_answer from input
+        IF user_answer equals correct_answer (case-insensitive):
+            INCREMENT score
+            DISPLAY "Correct!"
+        ELSE:
+            DISPLAY "Incorrect. Answer was: " + correct_answer
+    RETURN score
+
+MAIN PROGRAMME:
+    GET filename from user
+    GET number_of_questions from user
+    SET questions = load_questions(filename)
+    SET selected = select_random_questions(questions, number_of_questions)
+    SET final_score = run_quiz(selected)
+    CALCULATE percentage = (final_score / length of selected) * 100
+    DISPLAY final results
+
+----------------------------------------------------------------------------------------------------------------------
+1.2 Two Prompt Refinements
+----------------------------------------------------------------------------------------------------------------------
+First Refinement:
+-------------------
+Please refine the pseudocode to handle file validation and user input errors.
+Add specific error handling for when files don't exist, when the file format is incorrect, and when users enter invalid numbers for question count.
+-------------------
+AI’s Updated Pseudocode:
+-------------------
+
+[Previous pseudocode enhanced with:]
+
+FUNCTION load_questions(filename):
+    IF filename does not exist:
+        DISPLAY "Error: File not found"
+        RETURN empty list
+    
+    CREATE empty list questions
+    TRY:
+        OPEN file for reading
+        FOR each line in file:
+            STRIP whitespace from line
+            IF line is empty: CONTINUE
+            IF "|" not in line:
+                DISPLAY "Warning: Invalid format on this line, skipping"
+                CONTINUE
+            SPLIT line by "|" 
+            ADD cleaned question/answer tuple to questions list
+    EXCEPT file reading error:
+        DISPLAY "Error: Could not read file"
+        RETURN empty list
+    RETURN questions
+
+FUNCTION get_valid_number_input(prompt, max_value):
+    WHILE True:
+        TRY:
+            GET user_input
+            CONVERT to integer
+            IF integer <= 0:
+                DISPLAY "Please enter a positive number"
+                CONTINUE
+            IF integer > max_value:
+                DISPLAY "Using maximum available: " + max_value
+                RETURN max_value
+            RETURN integer
+        EXCEPT conversion error:
+            DISPLAY "Please enter a valid number"
+
+
+-------------------
+Second Refinement:
+-------------------
+
+Further enhance the pseudocode to include user experience improvements:
+add a main menu system, option to see score statistics, and better file format handling that can detect different delimiters automatically.
+
+-------------------
+AI’s Final Pseudocode:
+-------------------
+
+Previous pseudocode plus:]
+
+FUNCTION detect_delimiter(sample_line):
+    FOR delimiter in ["|", ",", "\t"]:
+        IF delimiter in sample_line AND sample_line.count(delimiter) == 1:
+            RETURN delimiter
+    RETURN None
+
+FUNCTION display_main_menu():
+    DISPLAY menu options:
+    1. Take Quiz
+    2. View Statistics
+    3. Exit
+
+FUNCTION main_program():
+    WHILE True:
+        CALL display_main_menu()
+        GET user_choice
+        IF choice is 1:
+            RUN quiz workflow
+        ELIF choice is 2:
+            DISPLAY previous scores if available
+        ELIF choice is 3:
+            EXIT
+        ELSE:
+            DISPLAY "Invalid choice"
+
+
+-------------------------------
+Critical Analysis (10 marks)
+My Analysis (148 words):
+
+Each refinement significantly improved the robustness and user experience of the pseudocode. The first refinement addressed critical error handling that was completely missing from the initial version - file validation, input sanitization, and graceful degradation when users request more questions than available. This moved the code from a “happy path only” solution to something that could handle real-world usage scenarios.
+
+The second refinement elevated the programme from basic functionality to a more polished application. The menu system and delimiter auto-detection make it more user-friendly, while the statistics feature adds value for repeat users.
+
+The most impactful refinement was the first one, as it addressed fundamental reliability issues. Without proper error handling, the initial pseudocode would crash on common scenarios like missing files or malformed data. This connects directly to concepts from Week 7 about file operations and the importance of anticipating what could go wrong rather than assuming perfect inputs.
+
+Course References: “My refinements applied the 6-step problem-solving methodology from Week 2: Computational Thinking, file
+operations concepts from Week 7: OOP Fundamentals & File Operations, and text-based interface design from Week 2: Building Simple Interfaces”
+-------------------------------
+
+Section 2: Debug & Correct Practice
+--------------------------------------------------------------------------------------------------------------------------------
+2.1 Error Detection Practice
+--------------------------------------------------------------------------------------------------------------------------------
+My Initial Error Observations:
+-------------------
+memory is used but memories is defined (line 23) - Variable scope issue with memory in the final loop - 
+The conversation history logic seems incomplete
+
+-------------------
+My AI Prompt:
+-------------------
+
+Please analyse this chatbot code for a beginner programming student. Identify errors that a student would typically make, 
+focusing on variable names, basic logic flow, and simple programming mistakes.
+
+I found several errors in this chatbot code:
+
+1. VARIABLE NAME ERROR (Line 23):
+   - Uses `memory.append()` but the variable is named `memories`
+   - This will cause a NameError at runtime
+
+2. VARIABLE SCOPE ERROR (Line 28):
+   - The for loop references `memory` but only `memories` exists
+   - This will cause a NameError when trying to display conversation history
+
+3. LOGIC ERROR:
+   - Only bot responses are being stored in some places, not user inputs
+   - The conversation history will be incomplete
+
+4. POTENTIAL RUNTIME ERROR:
+   - If the user types "quit" immediately, `memories` will be empty
+   - The final loop will run but display nothing
+Comparison of Findings: I caught the main variable naming error by carefully reading through the code using systematic debugging approaches. The AI provided more comprehensive analysis including edge cases I hadn’t considered, but my manual review using basic debugging helped me spot the core issues.
+
+Course Reference: “I applied the debugging approach from Week 1: Introduction to AI-First Python & Python Fundamentals - 
+identifying and fixing basic errors”
+-------------------
+2.2 Fix & Learn
+-------------------
+My AI Prompt:
+-------------------
+
+Please provide the corrected version of this code using only basic Python techniques suitable for our introductory course.
+Include simple error fixes and make sure the conversation history works properly.
+
+-------------------
+
+-------------------
